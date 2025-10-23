@@ -43,6 +43,7 @@ function SpawnerSystem:SpawnBrick(plot, player)
 	brick.Name = "DropperBrick"
 	brick.Size = GameConfig.BrickSize
 	brick.Position = plot.SpawnerPosition
+	brick.Anchored = false  -- Allow brick to fall and move
 	brick.BrickColor = BrickColor.new("Bright red")
 	brick.Material = Enum.Material.SmoothPlastic
 	brick.Parent = workspace

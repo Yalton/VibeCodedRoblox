@@ -17,8 +17,10 @@ function ConveyorSystem:Initialize(plotManager)
 	-- Detect new bricks entering conveyor
 	workspace.ChildAdded:Connect(function(child)
 		if child.Name == "DropperBrick" then
-			task.wait(0.1) -- Small delay to ensure brick lands on conveyor
-			self:TrackBrick(child)
+			task.wait(0.5) -- Wait for brick to fall onto conveyor
+			if child.Parent then
+				self:TrackBrick(child)
+			end
 		end
 	end)
 end
@@ -31,18 +33,23 @@ function ConveyorSystem:TrackBrick(brick)
 	local plot = self.PlotManager:GetPlot(plotId)
 	if not plot then return end
 
-	-- Check if brick is on the conveyor
+	-- Check if brick is on the conveyor (more lenient bounds)
 	local brickPos = brick.Position
 	local conveyorStart = plot.ConveyorStart
 	local conveyorEnd = plot.ConveyorEnd
 
 	-- Check if brick is within conveyor bounds
-	if brickPos.Z >= conveyorStart.Z - 5 and brickPos.Z <= conveyorEnd.Z + 5 then
-		if math.abs(brickPos.X - conveyorStart.X) <= GameConfig.ConveyorWidth / 2 + 2 then
+	if brickPos.Z >= conveyorStart.Z - 10 and brickPos.Z <= conveyorEnd.Z + 10 then
+		if math.abs(brickPos.X - conveyorStart.X) <= GameConfig.ConveyorWidth / 2 + 5 then
+			-- Add some damping to reduce bouncing
+			brick.CustomPhysicalProperties = PhysicalProperties.new(0.7, 0.3, 0.5, 1, 0.5)
+
 			self.TrackedBricks[brick] = {
 				PlotId = plotId,
 				LastMultiplierCheck = 0
 			}
+
+			print("Tracking brick for plot " .. plotId)
 		end
 	end
 end
@@ -56,9 +63,10 @@ function ConveyorSystem:UpdateBricks(deltaTime)
 		else
 			local plot = self.PlotManager:GetPlot(data.PlotId)
 			if plot then
-				-- Move brick forward along Z axis
-				local velocity = Vector3.new(0, 0, GameConfig.ConveyorSpeed)
-				brick.AssemblyLinearVelocity = velocity
+				-- Move brick forward along Z axis, preserve Y velocity for gravity
+				local currentVelocity = brick.AssemblyLinearVelocity
+				local newVelocity = Vector3.new(0, currentVelocity.Y, GameConfig.ConveyorSpeed)
+				brick.AssemblyLinearVelocity = newVelocity
 
 				-- Check for multiplier gates
 				self:CheckMultiplierGates(brick, plot, data)

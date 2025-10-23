@@ -51,8 +51,8 @@ function PlotManager:CreatePlot(plotId)
 	-- Create claim button
 	local claimButton = Instance.new("Part")
 	claimButton.Name = "ClaimButton"
-	claimButton.Size = Vector3.new(8, 1, 8)
-	claimButton.Position = basePart.Position + Vector3.new(0, 3, 0)
+	claimButton.Size = Vector3.new(8, 1.5, 8)
+	claimButton.Position = basePart.Position + Vector3.new(0, 3.25, 0)
 	claimButton.Anchored = true
 	claimButton.BrickColor = BrickColor.new("Bright blue")
 	claimButton.Material = Enum.Material.Neon
@@ -61,6 +61,7 @@ function PlotManager:CreatePlot(plotId)
 	local claimText = Instance.new("SurfaceGui")
 	claimText.Parent = claimButton
 	claimText.Face = Enum.NormalId.Top
+	claimText.ZOffset = 0.01  -- Slight offset to prevent Z-fighting
 
 	local textLabel = Instance.new("TextLabel")
 	textLabel.Size = UDim2.new(1, 0, 1, 0)
@@ -77,6 +78,7 @@ function PlotManager:CreatePlot(plotId)
 	spawner.Size = Vector3.new(10, 1, 10)
 	spawner.Position = basePart.Position + Vector3.new(0, 15, -GameConfig.PlotSize.Z / 2 + 8)
 	spawner.Anchored = true
+	spawner.CanCollide = false  -- Allow bricks to fall through
 	spawner.BrickColor = BrickColor.new("Bright yellow")
 	spawner.Material = Enum.Material.SmoothPlastic
 	spawner.Transparency = 0.3
