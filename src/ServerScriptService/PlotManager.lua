@@ -51,17 +51,19 @@ function PlotManager:CreatePlot(plotId)
 	-- Create claim button
 	local claimButton = Instance.new("Part")
 	claimButton.Name = "ClaimButton"
-	claimButton.Size = Vector3.new(8, 1.5, 8)
-	claimButton.Position = basePart.Position + Vector3.new(0, 3.25, 0)
+	claimButton.Size = Vector3.new(8, 2, 8)
+	claimButton.Position = basePart.Position + Vector3.new(0, 3.5, 0)
 	claimButton.Anchored = true
 	claimButton.BrickColor = BrickColor.new("Bright blue")
 	claimButton.Material = Enum.Material.Neon
 	claimButton.Parent = plotData.Model
 
-	local claimText = Instance.new("SurfaceGui")
+	-- Use BillboardGui instead of SurfaceGui to avoid Z-fighting
+	local claimText = Instance.new("BillboardGui")
+	claimText.Size = UDim2.new(0, 200, 0, 50)
+	claimText.StudsOffset = Vector3.new(0, 2, 0)
 	claimText.Parent = claimButton
-	claimText.Face = Enum.NormalId.Top
-	claimText.ZOffset = 0.01  -- Slight offset to prevent Z-fighting
+	claimText.Adornee = claimButton
 
 	local textLabel = Instance.new("TextLabel")
 	textLabel.Size = UDim2.new(1, 0, 1, 0)
@@ -86,9 +88,10 @@ function PlotManager:CreatePlot(plotId)
 
 	plotData.SpawnerPosition = spawner.Position + Vector3.new(0, 5, 0)
 
-	-- Create conveyor belt
-	local conveyorStart = spawner.Position + Vector3.new(0, -10, 10)
-	local conveyorEnd = conveyorStart + Vector3.new(0, 0, GameConfig.ConveyorLength)
+	-- Create conveyor belt - start directly below spawner, extend forward
+	-- Position conveyor to catch falling bricks
+	local conveyorStart = spawner.Position + Vector3.new(0, -10, -5)  -- Start 5 studs before spawner center
+	local conveyorEnd = conveyorStart + Vector3.new(0, 0, GameConfig.ConveyorLength + 10)  -- Extend 10 studs longer
 
 	plotData.ConveyorStart = conveyorStart
 	plotData.ConveyorEnd = conveyorEnd

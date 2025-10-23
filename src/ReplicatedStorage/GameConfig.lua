@@ -14,7 +14,7 @@ GameConfig.BrickBasicValue = 10 -- base money per brick
 -- Conveyor Settings
 GameConfig.ConveyorSpeed = 10 -- studs per second
 GameConfig.ConveyorWidth = 10
-GameConfig.ConveyorLength = 60
+GameConfig.ConveyorLength = 65
 
 -- Upgrade Costs and Effects
 GameConfig.Upgrades = {
